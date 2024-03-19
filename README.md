@@ -62,7 +62,13 @@ The NeMo Framework Launcher should be installed on a head node or a local machin
 ```bash
 git clone https://github.com/NVIDIA/NeMo-Megatron-Launcher.git
 cd NeMo-Megatron-Launcher
-pip install -r requirements.txt
+pip install -e .
+```
+
+### Development Dependencies
+To install the test, lint dependencies:
+```sh
+pip install -e '.[lint,test]'
 ```
 
 ## Usage
