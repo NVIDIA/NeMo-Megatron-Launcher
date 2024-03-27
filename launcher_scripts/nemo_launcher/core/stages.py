@@ -201,6 +201,14 @@ class NemoMegatronStage:
             f"export PYTHONPATH={self._nemo_code_path}:\${{PYTHONPATH}}",
         ]
 
+    def _make_use_flash_attention_command(self) -> List[str]:
+        """unset NVTE_FLASH_ATTN when using transformer engine"""
+        if self.cfg.training.model.get("mcore_gpt", False) and not self.cfg.training.model.get("use_flash_attention", False):
+            return [
+                f"export NVTE_FLASH_ATTN=0",
+            ]
+        return []
+
     def _make_k8s_spec_file(
         self, template_root: str, cluster_parameters: Dict, job_path: JobPaths
     ):
@@ -602,6 +610,7 @@ class NeMoStage(NemoMegatronStage):
         command_groups = [[]]
         command_groups[0] += self._make_wandb_login_command()
         command_groups[0] += self._make_nemo_path_command()
+        command_groups[0] += self._make_use_flash_attention_command()
         # command_groups[0] += self._make_numa_mapping_command()
 
         # _cuda_device_max_connections and _cuda_visible_devices cannot be used as command prefix on BCP
